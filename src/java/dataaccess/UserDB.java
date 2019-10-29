@@ -30,9 +30,9 @@ public class UserDB {
             connection = connectionPool.getConnection();
             String preparedQuery
                     = "INSERT INTO User_Table "
-                    + "(email, fname, lname, password) "
+                    + "(email, fname, lname, password, role) "
                     + "VALUES "
-                    + "(?, ?, ?, ?)";
+                    + "(?, ?, ?, ?, ?)";
 
             PreparedStatement ps = connection.prepareStatement(preparedQuery);
 
@@ -40,6 +40,7 @@ public class UserDB {
             ps.setString(2, user.getFname());
             ps.setString(3, user.getLname());
             ps.setString(4, user.getPassword());
+            ps.setInt(5, user.getRole().getRoleID());
 
             rows = ps.executeUpdate();
             ps.close();
@@ -63,15 +64,16 @@ public class UserDB {
             connectionPool = ConnectionPool.getInstance();
             connection = connectionPool.getConnection();
 
-            String preparedQuery = "UPDATE User_Table set active=?, fname=?, lname=?, password=? where email=?";
+            String preparedQuery = "UPDATE User_Table set active=?, fname=?, lname=?, password=?, role=? WHERE email=?";
             int successCount = 0;
 
             PreparedStatement statement = connection.prepareStatement(preparedQuery);
             statement.setBoolean(1, user.isActive());
             statement.setString(2, user.getFname());
             statement.setString(3, user.getLname());
-            statement.setString(4, user.getEmail());
-            statement.setString(5, user.getPassword());
+            statement.setString(4, user.getPassword());
+            statement.setInt(5, user.getRole().getRoleID());
+            statement.setString(6, user.getEmail());
 
             successCount = statement.executeUpdate();
             statement.close();
@@ -108,11 +110,54 @@ public class UserDB {
                 String fname = rs.getString(3);
                 String lname = rs.getString(4);
                 String password = rs.getString(5);
-                
+
                 int roleID = rs.getInt(6);
                 RoleDB roleDB = new RoleDB();
                 Role role = roleDB.getRole(roleID);
-                        
+
+                user = new User(userEmail, fname, lname, password, role);
+                user.setActive(active);
+                users.add(user);
+            }
+
+            return users;
+        } finally {
+            connectionPool.freeConnection(connection);
+        }
+    }
+
+    /**
+     * This method queries the database for all users. Every user is put into an
+     * ArrayList of users
+     *
+     * @return ArrayList users - the list of users retrieved from the database.
+     * @throws SQLException
+     */
+    public List<User> getAllActive() throws SQLException {
+        ConnectionPool connectionPool = null;
+        Connection connection = null;
+        try {
+            connectionPool = ConnectionPool.getInstance();
+            connection = connectionPool.getConnection();
+            User user;
+            ArrayList<User> users = new ArrayList<>();
+
+            String preparedQuery = "SELECT active, email, fname, lname, password, role FROM user_table "
+                    + "WHERE active = TRUE";
+            PreparedStatement ps = connection.prepareStatement(preparedQuery);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                boolean active = rs.getBoolean(1);
+                String userEmail = rs.getString(2);
+                String fname = rs.getString(3);
+                String lname = rs.getString(4);
+                String password = rs.getString(5);
+
+                int roleID = rs.getInt(6);
+                RoleDB roleDB = new RoleDB();
+                Role role = roleDB.getRole(roleID);
+
                 user = new User(userEmail, fname, lname, password, role);
                 user.setActive(active);
                 users.add(user);
@@ -153,11 +198,10 @@ public class UserDB {
                 String lname = rs.getString(4);
                 String password = rs.getString(5);
                 int roleID = rs.getInt(6);
-                
+
                 RoleDB roleDB = new RoleDB();
                 Role role = roleDB.getRole(roleID);
-                
-                
+
                 user = new User(userEmail, fname, lname, password, role);
                 user.setActive(active);
             }

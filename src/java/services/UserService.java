@@ -32,15 +32,16 @@ public class UserService {
      */
     public List<User> getAll() throws Exception {
         UserDB db = new UserDB();
-        ArrayList<User> userList = (ArrayList<User>) db.getAll();
-        ArrayList<User> activeUsers = new ArrayList<>();
-        
-        for (int i = 0; i < userList.size(); i++) {
-            if(userList.get(i).isActive()) {
-                activeUsers.add(userList.get(i));
-            }
-        }
-        return activeUsers;
+        ArrayList<User> userList = (ArrayList<User>) db.getAllActive();
+//        ArrayList<User> activeUsers = new ArrayList<>();
+//        
+//        for (int i = 0; i < userList.size(); i++) {
+//            if(userList.get(i).isActive()) {
+//                activeUsers.add(userList.get(i));
+//            }
+//        }
+//        return activeUsers;
+        return userList;
     }
 
     /**

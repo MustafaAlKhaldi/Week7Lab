@@ -90,6 +90,7 @@ public class UserServlet extends HttpServlet {
     String fname = request.getParameter("fname");
     String lname = request.getParameter("lname");
     String password = request.getParameter("password");
+    String role = request.getParameter("role");
 
     String action = request.getParameter("action");
     action = action == null ? "" : action;
