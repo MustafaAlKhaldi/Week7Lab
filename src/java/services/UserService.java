@@ -50,7 +50,7 @@ public class UserService {
      * @return
      * @throws Exception 
      */
-    public int update(String email, String fname, String lname, String password) throws Exception {
+    public int update(String email, String fname, String lname, String password, int roleID) throws Exception {
         UserDB db = new UserDB();
         User user = new User(email, fname, lname, password, null);
         int i = db.update(user);
@@ -79,7 +79,7 @@ public class UserService {
      * @return the int from UserDb
      * @throws Exception - all exceptions that could be had.
      */
-    public int insert(String email, String fname, String lname, String password) throws Exception {
+    public int insert(String email, String fname, String lname, String password, int roleID) throws Exception {
         UserDB db = new UserDB();
         User user = new User(email, fname, lname, password, null);
         int i = db.insert(user);

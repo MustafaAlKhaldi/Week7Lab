@@ -91,7 +91,7 @@ public class UserServlet extends HttpServlet {
     String lname = request.getParameter("lname");
     String password = request.getParameter("password");
     String role = request.getParameter("role");
-
+    int roleID = Integer.parseInt(role);
     String action = request.getParameter("action");
     action = action == null ? "" : action;
 
@@ -99,13 +99,13 @@ public class UserServlet extends HttpServlet {
       switch (action) {
         case "add":
           if (checkIsValid(new String[]{email, fname, lname, password})) {
-            us.insert(email, fname, lname, password);
+            us.insert(email, fname, lname, password, roleID);
           } else {
             request.setAttribute("error", "All fields are required");
           }
         case "edit":
           if (checkIsValid(new String[]{email, fname, lname})) {
-            us.update(email, fname, lname, password);
+            us.update(email, fname, lname, password, roleID);
           } else {
             request.setAttribute("error", "All fields are required");
           }
